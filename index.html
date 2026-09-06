@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KokiChat</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
 
@@ -11,16 +12,16 @@
 
 body{
   font-family:'Vazirmatn',sans-serif;
-  background:#060d1a;
-  color:#e8eaf0;
+  background:#0b0a09;
+  color:#f3efe4;
   height:100dvh;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
   background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(14,165,233,0.1) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(56,189,248,0.07) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 50%, rgba(242,181,68,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(232,103,46,0.08) 0%, transparent 50%);
 }
 
 .glass{
@@ -37,14 +38,15 @@ body{
   gap:22px;width:100%;max-width:320px;padding:36px 28px;
 }
 .logo-wrap{
-  width:76px;height:76px;border-radius:50%;
-  background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+  width:96px;height:96px;
   display:flex;align-items:center;justify-content:center;
-  font-size:34px;
-  box-shadow:0 0 40px rgba(14,165,233,0.45);
+}
+.logo-wrap img{
+  width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 0 28px rgba(242,181,68,0.4));
 }
 .login-title{font-size:22px;font-weight:700;letter-spacing:-0.5px}
-.login-sub{font-size:13px;color:rgba(232,234,240,0.4);text-align:center}
+.login-sub{font-size:13px;color:rgba(243,239,228,0.4);text-align:center}
 
 input[type="password"]{
   width:100%;
@@ -62,19 +64,19 @@ input[type="password"]{
   direction:ltr;
 }
 input[type="password"]:focus{
-  border-color:rgba(14,165,233,0.7);
-  box-shadow:0 0 0 3px rgba(14,165,233,0.15);
+  border-color:rgba(242,181,68,0.75);
+  box-shadow:0 0 0 3px rgba(242,181,68,0.15);
 }
 
 .btn-primary{
   width:100%;
-  background:linear-gradient(135deg,#0ea5e9,#38bdf8);
-  color:#fff;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#f2b544,#e8672e);
+  color:#171208;border:none;border-radius:12px;
   font-family:'Vazirmatn',sans-serif;
   font-size:15px;font-weight:600;
   padding:13px;cursor:pointer;
   transition:opacity .2s,transform .1s;
-  box-shadow:0 4px 20px rgba(14,165,233,0.4);
+  box-shadow:0 4px 20px rgba(232,103,46,0.4);
 }
 .btn-primary:hover{opacity:.88}
 .btn-primary:active{transform:scale(.98)}
@@ -98,14 +100,14 @@ input[type="password"]:focus{
   transition:background .2s,border-color .2s,transform .1s;
   text-align:center;
 }
-.name-btn:hover{background:rgba(14,165,233,0.15);border-color:rgba(14,165,233,0.4)}
+.name-btn:hover{background:rgba(242,181,68,0.15);border-color:rgba(242,181,68,0.4)}
 .name-btn:active{transform:scale(.98)}
 
 /* CHAT */
 #chat-screen{
   display:none;flex-direction:column;
   width:100%;max-width:580px;height:100dvh;
-  background:rgba(6,13,26,0.75);
+  background:rgba(11,10,9,0.78);
   backdrop-filter:blur(30px);
   -webkit-backdrop-filter:blur(30px);
   border-left:1px solid rgba(255,255,255,0.06);
@@ -115,25 +117,27 @@ input[type="password"]:focus{
 .chat-header{
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 16px;
-  background:rgba(14,165,233,0.06);
-  border-bottom:1px solid rgba(14,165,233,0.15);
+  background:rgba(242,181,68,0.06);
+  border-bottom:1px solid rgba(242,181,68,0.15);
   flex-shrink:0;gap:10px;
 }
 .hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-logo{width:26px;height:26px;object-fit:contain;flex-shrink:0}
 .avatar{
   width:40px;height:40px;border-radius:50%;
-  background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+  background:linear-gradient(135deg,#f2b544,#e8672e);
+  color:#171208;
   display:flex;align-items:center;justify-content:center;
   font-size:16px;font-weight:700;flex-shrink:0;
-  box-shadow:0 0 12px rgba(14,165,233,0.35);
+  box-shadow:0 0 12px rgba(232,103,46,0.35);
 }
-.avatar.b{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
+.avatar.b{background:linear-gradient(135deg,#4a4a4d,#6d6d72);color:#f3efe4}
 .hdr-info{display:flex;flex-direction:column;gap:1px}
-.hdr-name{font-size:15px;font-weight:600}
-.hdr-status{font-size:11.5px;color:rgba(232,234,240,0.4)}
+.hdr-name{font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px}
+.hdr-status{font-size:11.5px;color:rgba(243,239,228,0.4)}
 .hdr-right{display:flex;align-items:center;gap:6px}
 .icon-btn{
-  background:none;border:none;color:rgba(232,234,240,0.4);
+  background:none;border:none;color:rgba(243,239,228,0.4);
   cursor:pointer;padding:7px;border-radius:9px;font-size:17px;
   transition:color .2s,background .2s;display:flex;align-items:center;
 }
@@ -146,7 +150,7 @@ input[type="password"]:focus{
   scroll-behavior:smooth;
 }
 #messages::-webkit-scrollbar{width:3px}
-#messages::-webkit-scrollbar-thumb{background:rgba(14,165,233,0.2);border-radius:3px}
+#messages::-webkit-scrollbar-thumb{background:rgba(242,181,68,0.25);border-radius:3px}
 
 .msg-wrap{display:flex;flex-direction:column;max-width:72%}
 .msg-wrap.me{align-self:flex-start;align-items:flex-start}
@@ -158,8 +162,8 @@ input[type="password"]:focus{
   word-break:break-word;white-space:pre-wrap;
 }
 .msg-wrap.me .bubble{
-  background:rgba(14,165,233,0.2);
-  border:1px solid rgba(14,165,233,0.3);
+  background:rgba(242,181,68,0.18);
+  border:1px solid rgba(242,181,68,0.32);
   border-bottom-right-radius:4px;
 }
 .msg-wrap.them .bubble{
@@ -168,13 +172,13 @@ input[type="password"]:focus{
   border-bottom-left-radius:4px;
   backdrop-filter:blur(8px);
 }
-.msg-meta{font-size:11px;color:rgba(232,234,240,0.28);margin-top:3px;padding:0 3px}
+.msg-meta{font-size:11px;color:rgba(243,239,228,0.28);margin-top:3px;padding:0 3px}
 
 .date-sep{
   align-self:center;font-size:11.5px;
-  color:rgba(232,234,240,0.3);
-  background:rgba(14,165,233,0.07);
-  border:1px solid rgba(14,165,233,0.15);
+  color:rgba(243,239,228,0.3);
+  background:rgba(242,181,68,0.08);
+  border:1px solid rgba(242,181,68,0.18);
   border-radius:20px;padding:3px 14px;
   margin:8px 0;
 }
@@ -187,8 +191,8 @@ input[type="password"]:focus{
 .chat-input{
   display:flex;align-items:flex-end;gap:8px;
   padding:10px 12px;
-  background:rgba(14,165,233,0.04);
-  border-top:1px solid rgba(14,165,233,0.12);
+  background:rgba(242,181,68,0.04);
+  border-top:1px solid rgba(242,181,68,0.14);
   flex-shrink:0;position:relative;
 }
 
@@ -207,16 +211,16 @@ input[type="password"]:focus{
   transition:border-color .2s;
   direction:rtl;
 }
-#msg-input:focus{border-color:rgba(14,165,233,0.5)}
-#msg-input::placeholder{color:rgba(232,234,240,0.28)}
+#msg-input:focus{border-color:rgba(242,181,68,0.55)}
+#msg-input::placeholder{color:rgba(243,239,228,0.28)}
 
 .send-btn{
-  background:linear-gradient(135deg,#0ea5e9,#38bdf8);
-  border:none;border-radius:12px;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#f2b544,#e8672e);
+  border:none;border-radius:12px;color:#171208;cursor:pointer;
   width:40px;height:40px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   font-size:17px;
-  box-shadow:0 2px 12px rgba(14,165,233,0.4);
+  box-shadow:0 2px 12px rgba(232,103,46,0.4);
   transition:opacity .2s,transform .1s;
 }
 .send-btn:hover{opacity:.88}
@@ -224,9 +228,9 @@ input[type="password"]:focus{
 
 #sticker-panel{
   position:absolute;bottom:68px;right:12px;
-  background:rgba(6,13,26,0.97);
+  background:rgba(11,10,9,0.97);
   backdrop-filter:blur(20px);
-  border:1px solid rgba(14,165,233,0.2);
+  border:1px solid rgba(242,181,68,0.22);
   border-radius:16px;padding:12px;
   display:none;flex-wrap:wrap;gap:6px;
   width:240px;z-index:50;
@@ -238,7 +242,7 @@ input[type="password"]:focus{
   border-radius:8px;transition:background .15s,transform .1s;
   line-height:1;
 }
-.stk:hover{background:rgba(14,165,233,0.15);transform:scale(1.2)}
+.stk:hover{background:rgba(242,181,68,0.16);transform:scale(1.2)}
 
 .dot-online{
   width:8px;height:8px;border-radius:50%;
@@ -254,16 +258,16 @@ input[type="password"]:focus{
 }
 #cfg-modal.open{display:flex}
 .modal-box{
-  background:rgba(6,13,26,0.98);
-  border:1px solid rgba(14,165,233,0.2);
+  background:rgba(11,10,9,0.98);
+  border:1px solid rgba(242,181,68,0.2);
   border-radius:20px;padding:28px 22px;
   width:92%;max-width:360px;
   display:flex;flex-direction:column;gap:14px;
 }
 .modal-title{font-size:16px;font-weight:700}
-.modal-desc{font-size:12.5px;color:rgba(232,234,240,0.4);line-height:1.7}
+.modal-desc{font-size:12.5px;color:rgba(243,239,228,0.4);line-height:1.7}
 .field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:12px;color:rgba(232,234,240,0.4)}
+.field label{font-size:12px;color:rgba(243,239,228,0.4)}
 .field input{
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.1);
@@ -272,7 +276,7 @@ input[type="password"]:focus{
   font-size:13px;padding:9px 12px;outline:none;
   transition:border-color .2s;direction:ltr;
 }
-.field input:focus{border-color:rgba(14,165,233,0.5)}
+.field input:focus{border-color:rgba(242,181,68,0.5)}
 .modal-btns{display:flex;gap:10px;margin-top:4px}
 .btn-cancel{
   flex:1;background:rgba(255,255,255,0.05);
@@ -300,7 +304,7 @@ input[type="password"]:focus{
 
 .n-dot{
   width:9px;height:9px;border-radius:50%;
-  background:#0ea5e9;box-shadow:0 0 8px #0ea5e9;
+  background:#e8672e;box-shadow:0 0 8px #e8672e;
   display:none;
 }
 
@@ -313,7 +317,7 @@ input[type="password"]:focus{
 <body>
 
 <div id="login-screen" class="glass">
-  <div class="logo-wrap">💬</div>
+  <div class="logo-wrap"><img src="logo.png" alt="KokiChat"></div>
   <div class="login-title">KokiChat</div>
   <div class="login-sub">فضای خصوصی گفتگو</div>
   <input type="password" id="pwd" placeholder="••••••" />
@@ -322,7 +326,7 @@ input[type="password"]:focus{
 </div>
 
 <div id="name-screen" class="glass">
-  <div class="logo-wrap">👤</div>
+  <div class="logo-wrap"><img src="logo.png" alt="KokiChat"></div>
   <div class="login-title">تو کی هستی؟</div>
   <div class="login-sub">یکی رو انتخاب کن</div>
   <button class="name-btn" id="pick-a">🔵 کاربر ۱</button>
@@ -334,7 +338,7 @@ input[type="password"]:focus{
     <div class="hdr-left">
       <div class="avatar" id="my-av">؟</div>
       <div class="hdr-info">
-        <div class="hdr-name">KokiChat 🔐</div>
+        <div class="hdr-name"><img class="hdr-logo" src="logo.png" alt=""> KokiChat 🔐</div>
         <div class="hdr-status" id="status-txt">در حال اتصال...</div>
       </div>
     </div>
@@ -381,19 +385,13 @@ input[type="password"]:focus{
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, set, onDisconnect }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const FB = {
-  apiKey:            "AIzaSyBNYH63AusNWZHpLeho-d07XDov0jvo0fw",
-  authDomain:        "kokichat-3059d.firebaseapp.com",
-  databaseURL:       "https://kokichat-3059d-default-rtdb.firebaseio.com",
-  projectId:         "kokichat-3059d",
-  storageBucket:     "kokichat-3059d.firebasestorage.app",
-  messagingSenderId: "569407736604",
-  appId:             "1:569407736604:web:831ddd62125c2a54c948d9"
-};
+// اطلاعات پروژه‌ی Supabase
+const SUPABASE_URL      = "https://spliizlxeouevrjrgtwy.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_O1-F6Pfaw0Vvm6h9o2tGnw_CbRqOwR9";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const PASSWORD = "kokmal";
 const USER_A   = "کاربر ۱";
@@ -405,7 +403,7 @@ const STICKERS = [
   "🌹","🎉","👏","💯","🫶","😤","🤔","😴","👀","🫠"
 ];
 
-let db, me, lastDate, unread = false, stkOpen = false;
+let me, lastDate, unread = false, stkOpen = false, msgCache = [], heartbeatId;
 
 // stickers
 const sp = document.getElementById('sticker-panel');
@@ -445,33 +443,57 @@ function pickName(name) {
   initChat();
 }
 
-function initChat() {
-  const app = initializeApp(FB, 'kokichat');
-  db = getDatabase(app);
-
-  const presRef = ref(db, `presence/${me}`);
-  set(presRef, { online: true, ts: Date.now() });
-  onDisconnect(presRef).set({ online: false, ts: Date.now() });
-
+async function initChat() {
   const other = me === USER_A ? USER_B : USER_A;
-  onValue(ref(db, `presence/${other}`), snap => {
-    const d = snap.val();
-    const el = document.getElementById('status-txt');
-    if (d?.online) el.innerHTML = `<span class="dot-online"></span> ${other} آنلاینه`;
-    else if (d?.ts) el.textContent = `${other} — ${ago(d.ts)}`;
-    else el.textContent = `${other} آفلاینه`;
-  });
 
-  onValue(ref(db, 'messages'), snap => {
-    renderAll(snap.val() || {});
-  });
+  // --- presence ---
+  async function pingPresence(online) {
+    await supabase.from('presence').upsert({ name: me, online, ts: Date.now() });
+  }
+  await pingPresence(true);
+  heartbeatId = setInterval(() => pingPresence(true), 15000);
+  window.addEventListener('beforeunload', () => { navigator.sendBeacon && pingPresence(false); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pingPresence(true); });
+
+  function paintPresence(d) {
+    const el = document.getElementById('status-txt');
+    if (!d) { el.textContent = `${other} آفلاینه`; return; }
+    const fresh = Date.now() - d.ts < 30000;
+    if (d.online && fresh) el.innerHTML = `<span class="dot-online"></span> ${other} آنلاینه`;
+    else if (d.ts) el.textContent = `${other} — ${ago(d.ts)}`;
+    else el.textContent = `${other} آفلاینه`;
+  }
+
+  const { data: presRow } = await supabase.from('presence').select('*').eq('name', other).maybeSingle();
+  paintPresence(presRow);
+  setInterval(async () => {
+    const { data } = await supabase.from('presence').select('*').eq('name', other).maybeSingle();
+    paintPresence(data);
+  }, 10000);
+
+  supabase.channel('presence-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'presence', filter: `name=eq.${other}` },
+      payload => paintPresence(payload.new))
+    .subscribe();
+
+  // --- messages ---
+  const { data: initialMsgs } = await supabase.from('messages').select('*').order('ts', { ascending: true });
+  msgCache = initialMsgs || [];
+  renderAll(msgCache);
+
+  supabase.channel('messages-changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+      msgCache.push(payload.new);
+      renderAll(msgCache);
+    })
+    .subscribe();
 }
 
 function renderAll(msgs) {
   const c = document.getElementById('messages');
   const atBottom = c.scrollHeight - c.scrollTop - c.clientHeight < 80;
   c.innerHTML = ''; lastDate = null;
-  Object.values(msgs).sort((a,b) => a.ts - b.ts).forEach(renderOne);
+  [...msgs].sort((a,b) => a.ts - b.ts).forEach(renderOne);
   if (atBottom) c.scrollTop = c.scrollHeight;
 }
 
@@ -530,19 +552,19 @@ function renderOne(m) {
 }
 
 async function sendMsg() {
-  if (!db || !me) return;
+  if (!me) return;
   const inp = document.getElementById('msg-input');
   const txt = inp.value.trim();
   if (!txt) return;
   inp.value = ''; inp.style.height = 'auto';
-  await push(ref(db, 'messages'), { sender: me, type: 'text', text: txt, ts: Date.now() });
+  await supabase.from('messages').insert({ sender: me, type: 'text', text: txt, ts: Date.now() });
   if (me === USER_B) sendBale(`💬 پیام:\n${txt.slice(0,100)}`);
 }
 window.sendMsg = sendMsg;
 
 async function sendStk(s) {
-  if (!db || !me) return;
-  await push(ref(db, 'messages'), { sender: me, type: 'sticker', text: s, ts: Date.now() });
+  if (!me) return;
+  await supabase.from('messages').insert({ sender: me, type: 'sticker', text: s, ts: Date.now() });
   if (me === USER_B) sendBale(`${s} استیکر`);
 }
 
@@ -584,9 +606,10 @@ document.addEventListener('click', e => {
 
 window.onKey  = e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} };
 window.grow   = el => { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; };
-window.doLogout = () => {
+window.doLogout = async () => {
   if (!confirm('خروج؟')) return;
-  if (db && me) set(ref(db, `presence/${me}`), { online: false, ts: Date.now() });
+  if (heartbeatId) clearInterval(heartbeatId);
+  if (me) await supabase.from('presence').upsert({ name: me, online: false, ts: Date.now() });
   location.reload();
 };
 window.openLb = src => { document.getElementById('lb-img').src=src; document.getElementById('lightbox').classList.add('open'); };
