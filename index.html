@@ -12,7 +12,7 @@
 
 body{
   font-family:'Vazirmatn',sans-serif;
-  background:#0b0a09;
+  background:#050b16;
   color:#f3efe4;
   height:100dvh;
   display:flex;
@@ -20,8 +20,8 @@ body{
   justify-content:center;
   overflow:hidden;
   background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(242,181,68,0.10) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(232,103,46,0.08) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 50%, rgba(56,189,248,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(14,165,233,0.10) 0%, transparent 50%);
 }
 
 .glass{
@@ -45,74 +45,70 @@ body{
 /* LOGIN */
 #login-screen{
   display:flex;flex-direction:column;align-items:center;
-  gap:22px;width:100%;max-width:320px;padding:36px 28px;
+  gap:20px;width:100%;max-width:340px;padding:44px 30px 38px;
 }
 .logo-wrap{
-  width:96px;height:96px;
+  width:110px;height:110px;
   display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.logo-wrap::before{
+  content:'';position:absolute;inset:-18px;border-radius:50%;
+  background:radial-gradient(circle, rgba(56,189,248,0.55) 0%, rgba(14,165,233,0.25) 45%, transparent 72%);
+  filter:blur(6px);
+  animation:orbGlow 3.2s ease-in-out infinite;
+  z-index:0;
+}
+@keyframes orbGlow{
+  0%,100%{transform:scale(0.92);opacity:0.75}
+  50%{transform:scale(1.08);opacity:1}
 }
 .logo-wrap img{
-  width:100%;height:100%;object-fit:contain;
-  filter:drop-shadow(0 0 28px rgba(242,181,68,0.4));
+  width:100%;height:100%;object-fit:contain;position:relative;z-index:1;
+  filter:drop-shadow(0 0 30px rgba(56,189,248,0.55));
 }
-.login-title{font-size:22px;font-weight:700;letter-spacing:-0.5px}
-.login-sub{font-size:13px;color:rgba(243,239,228,0.4);text-align:center}
+.login-title{
+  font-size:26px;font-weight:700;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,#7dd3fc,#38bdf8 60%,#0ea5e9);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.login-sub{font-size:13.5px;color:rgba(243,239,228,0.45);text-align:center;margin-top:-10px}
 
-input[type="password"], input[type="text"]#name-input{
+input[type="password"]{
   width:100%;
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.12);
-  border-radius:12px;
+  border-radius:14px;
   color:#e8eaf0;
   font-family:'Vazirmatn',sans-serif;
   font-size:20px;
-  padding:12px 16px;
+  padding:15px 16px;
   outline:none;
   text-align:center;
   letter-spacing:8px;
   transition:border-color .2s,box-shadow .2s;
   direction:ltr;
 }
-input[type="password"]:focus, #name-input:focus{
-  border-color:rgba(242,181,68,0.75);
-  box-shadow:0 0 0 3px rgba(242,181,68,0.15);
+input[type="password"]:focus{
+  border-color:rgba(56,189,248,0.75);
+  box-shadow:0 0 0 3px rgba(56,189,248,0.18);
 }
-#name-input{letter-spacing:normal;font-size:16px}
 
 .btn-primary{
   width:100%;
-  background:linear-gradient(135deg,#f2b544,#e8672e);
-  color:#171208;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  color:#062430;border:none;border-radius:999px;
   font-family:'Vazirmatn',sans-serif;
-  font-size:15px;font-weight:600;
-  padding:13px;cursor:pointer;
+  font-size:16px;font-weight:700;
+  padding:15px;cursor:pointer;
   transition:opacity .2s,transform .1s;
-  box-shadow:0 4px 20px rgba(232,103,46,0.4);
+  box-shadow:0 8px 28px rgba(14,165,233,0.45), 0 0 0 1px rgba(255,255,255,0.08) inset;
 }
-.btn-primary:hover{opacity:.88}
+.btn-primary:hover{opacity:.9}
 .btn-primary:active{transform:scale(.98)}
 
-.err{font-size:13px;color:#f87171;text-align:center;min-height:18px}
-
-/* NAME */
-#name-screen{
-  display:none;flex-direction:column;align-items:center;
-  gap:20px;width:100%;max-width:320px;padding:36px 28px;
-}
-.name-btn{
-  width:100%;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:14px;
-  color:#e8eaf0;
-  font-family:'Vazirmatn',sans-serif;
-  font-size:15px;font-weight:500;
-  padding:16px;cursor:pointer;
-  transition:background .2s,border-color .2s,transform .1s;
-  text-align:center;
-}
-.name-btn:hover{background:rgba(242,181,68,0.15);border-color:rgba(242,181,68,0.4)}
-.name-btn:active{transform:scale(.98)}
+.err{font-size:13px;color:#f87171;text-align:center;min-height:18px;transition:color .2s}
+.err.welcome{color:#7dd3fc;font-weight:600}
 
 /* CHAT */
 #chat-screen{
@@ -130,7 +126,7 @@ input[type="password"]:focus, #name-input:focus{
   position:relative;overflow:hidden;
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 16px;
-  background:rgba(242,181,68,0.07);
+  background:rgba(56,189,248,0.07);
   backdrop-filter:blur(26px) saturate(150%);
   -webkit-backdrop-filter:blur(26px) saturate(150%);
   border-bottom:1px solid rgba(255,255,255,0.1);
@@ -146,18 +142,16 @@ input[type="password"]:focus, #name-input:focus{
 .hdr-logo{width:26px;height:26px;object-fit:contain;flex-shrink:0}
 .avatar{
   width:40px;height:40px;border-radius:50%;
-  background:linear-gradient(135deg,#f2b544,#e8672e);
-  color:#171208;
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
   display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;
-  box-shadow:0 0 12px rgba(232,103,46,0.35);
+  flex-shrink:0;
+  box-shadow:0 0 12px rgba(14,165,233,0.4);
   position:relative;overflow:hidden;
 }
-.avatar span.av-label{position:relative;z-index:2}
 .avatar .fireball{
   position:absolute;top:50%;left:50%;width:9px;height:9px;
   margin:-4.5px 0 0 -4.5px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,#fff6d0,#f2b544 45%,#e8672e 85%);
+  background:radial-gradient(circle at 30% 30%,#fff6d0,#fbbf24 45%,#e8672e 85%);
   box-shadow:0 0 6px 2px rgba(232,103,46,0.85);
   animation:fireOrbit 2.6s linear infinite;
   z-index:1;
@@ -166,18 +160,18 @@ input[type="password"]:focus, #name-input:focus{
   from{transform:rotate(0deg) translateX(12px) rotate(0deg);}
   to{transform:rotate(360deg) translateX(12px) rotate(-360deg);}
 }
-.avatar.b{background:linear-gradient(135deg,#4a4a4d,#6d6d72);color:#f3efe4}
+.avatar.b{background:linear-gradient(135deg,#0c2d4a,#155e8a)}
 .avatar.b .fireball{display:none}
 .avatar.b .waterfill{
   position:absolute;left:-2px;right:-2px;bottom:-2px;height:0%;
-  background:linear-gradient(180deg,rgba(147,197,253,0.45),rgba(96,165,250,0.8));
+  background:linear-gradient(180deg,rgba(186,230,253,0.55),rgba(56,189,248,0.85));
   border-radius:48% 48% 0 0/60% 60% 0 0;
   animation:waterFill 4s ease-in-out infinite;
   z-index:1;
 }
 .avatar.b .drop{
   position:absolute;top:-8px;left:50%;width:5px;height:7px;
-  background:#93c5fd;border-radius:50% 50% 50% 0;
+  background:#bae6fd;border-radius:50% 50% 50% 0;
   transform:translateX(-50%) rotate(45deg);
   animation:dropFall 4s ease-in infinite;
   z-index:1;
@@ -206,7 +200,7 @@ input[type="password"]:focus, #name-input:focus{
   scroll-behavior:smooth;
 }
 #messages::-webkit-scrollbar{width:3px}
-#messages::-webkit-scrollbar-thumb{background:rgba(242,181,68,0.25);border-radius:3px}
+#messages::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.25);border-radius:3px}
 
 .msg-wrap{display:flex;flex-direction:column;max-width:72%}
 .msg-wrap.me{align-self:flex-start;align-items:flex-start}
@@ -218,8 +212,8 @@ input[type="password"]:focus, #name-input:focus{
   word-break:break-word;white-space:pre-wrap;
 }
 .msg-wrap.me .bubble{
-  background:rgba(242,181,68,0.18);
-  border:1px solid rgba(242,181,68,0.32);
+  background:rgba(56,189,248,0.18);
+  border:1px solid rgba(56,189,248,0.32);
   border-bottom-right-radius:4px;
 }
 .msg-wrap.them .bubble{
@@ -233,8 +227,8 @@ input[type="password"]:focus, #name-input:focus{
 .date-sep{
   align-self:center;font-size:11.5px;
   color:rgba(243,239,228,0.3);
-  background:rgba(242,181,68,0.08);
-  border:1px solid rgba(242,181,68,0.18);
+  background:rgba(56,189,248,0.08);
+  border:1px solid rgba(56,189,248,0.18);
   border-radius:20px;padding:3px 14px;
   margin:8px 0;
 }
@@ -247,7 +241,7 @@ input[type="password"]:focus, #name-input:focus{
 .chat-input{
   display:flex;align-items:flex-end;gap:8px;
   padding:10px 12px;
-  background:rgba(242,181,68,0.05);
+  background:rgba(56,189,248,0.05);
   backdrop-filter:blur(26px) saturate(150%);
   -webkit-backdrop-filter:blur(26px) saturate(150%);
   border-top:1px solid rgba(255,255,255,0.1);
@@ -274,16 +268,16 @@ input[type="password"]:focus, #name-input:focus{
   transition:border-color .2s;
   direction:rtl;
 }
-#msg-input:focus{border-color:rgba(242,181,68,0.55)}
+#msg-input:focus{border-color:rgba(56,189,248,0.55)}
 #msg-input::placeholder{color:rgba(243,239,228,0.28)}
 
 .send-btn{
-  background:linear-gradient(135deg,#f2b544,#e8672e);
-  border:none;border-radius:12px;color:#171208;cursor:pointer;
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  border:none;border-radius:12px;color:#062430;cursor:pointer;
   width:40px;height:40px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   font-size:17px;
-  box-shadow:0 2px 12px rgba(232,103,46,0.4);
+  box-shadow:0 2px 12px rgba(14,165,233,0.4);
   transition:opacity .2s,transform .1s;
 }
 .send-btn:hover{opacity:.88}
@@ -293,7 +287,7 @@ input[type="password"]:focus, #name-input:focus{
   position:absolute;bottom:68px;right:12px;
   background:rgba(11,10,9,0.97);
   backdrop-filter:blur(20px);
-  border:1px solid rgba(242,181,68,0.22);
+  border:1px solid rgba(56,189,248,0.22);
   border-radius:16px;padding:12px;
   display:none;flex-wrap:wrap;gap:6px;
   width:240px;z-index:50;
@@ -305,7 +299,7 @@ input[type="password"]:focus, #name-input:focus{
   border-radius:8px;transition:background .15s,transform .1s;
   line-height:1;
 }
-.stk:hover{background:rgba(242,181,68,0.16);transform:scale(1.2)}
+.stk:hover{background:rgba(56,189,248,0.16);transform:scale(1.2)}
 img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
 .sticker-bubble img.emoji{height:44px;width:44px;vertical-align:middle;margin:0}
 .stk img.emoji{height:26px;width:26px}
@@ -314,7 +308,7 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
   position:absolute;bottom:68px;right:56px;
   background:rgba(11,10,9,0.97);
   backdrop-filter:blur(20px);
-  border:1px solid rgba(242,181,68,0.22);
+  border:1px solid rgba(56,189,248,0.22);
   border-radius:16px;padding:10px;
   display:none;flex-direction:column;gap:6px;
   width:230px;z-index:50;
@@ -330,14 +324,14 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
   padding:9px 11px;cursor:pointer;
   transition:background .15s,border-color .15s;
 }
-.quick-item:hover{background:rgba(242,181,68,0.15);border-color:rgba(242,181,68,0.35)}
+.quick-item:hover{background:rgba(56,189,248,0.15);border-color:rgba(56,189,248,0.35)}
 
 .send-btn.sending{animation:sendPulse .45s ease;}
 @keyframes sendPulse{
   0%{transform:scale(1);}
   35%{transform:scale(.8) rotate(-8deg);}
-  60%{transform:scale(1.18) rotate(4deg);box-shadow:0 0 0 8px rgba(232,103,46,0.25);}
-  100%{transform:scale(1) rotate(0);box-shadow:0 2px 12px rgba(232,103,46,0.4);}
+  60%{transform:scale(1.18) rotate(4deg);box-shadow:0 0 0 8px rgba(14,165,233,0.25);}
+  100%{transform:scale(1) rotate(0);box-shadow:0 2px 12px rgba(14,165,233,0.4);}
 }
 
 .dot-online{
@@ -355,7 +349,7 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
 #cfg-modal.open{display:flex}
 .modal-box{
   background:rgba(11,10,9,0.98);
-  border:1px solid rgba(242,181,68,0.2);
+  border:1px solid rgba(56,189,248,0.2);
   border-radius:20px;padding:28px 22px;
   width:92%;max-width:360px;
   display:flex;flex-direction:column;gap:14px;
@@ -372,7 +366,7 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
   font-size:13px;padding:9px 12px;outline:none;
   transition:border-color .2s;direction:ltr;
 }
-.field input:focus{border-color:rgba(242,181,68,0.5)}
+.field input:focus{border-color:rgba(56,189,248,0.5)}
 .modal-btns{display:flex;gap:10px;margin-top:4px}
 .btn-cancel{
   flex:1;background:rgba(255,255,255,0.05);
@@ -400,7 +394,7 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
 
 .n-dot{
   width:9px;height:9px;border-radius:50%;
-  background:#e8672e;box-shadow:0 0 8px #e8672e;
+  background:#0ea5e9;box-shadow:0 0 8px #0ea5e9;
   display:none;
 }
 
@@ -416,24 +410,15 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
   <div class="logo-wrap"><img src="logo.png" alt="KokiChat"></div>
   <div class="login-title">KokiChat</div>
   <div class="login-sub">فضای خصوصی گفتگو</div>
-  <input type="password" id="pwd" placeholder="••••••" />
+  <input type="password" id="pwd" placeholder="••••••" autocomplete="off" />
   <div class="err" id="err"></div>
   <button class="btn-primary" id="login-btn">ورود</button>
-</div>
-
-<div id="name-screen" class="glass">
-  <div class="logo-wrap"><img src="logo.png" alt="KokiChat"></div>
-  <div class="login-title">نام کاربری؟</div>
-  <div class="login-sub">نام کاربریت رو وارد کن</div>
-  <input type="text" id="name-input" placeholder="نام کاربری" autocomplete="off" />
-  <div class="err" id="name-err"></div>
-  <button class="btn-primary" id="name-btn">ورود</button>
 </div>
 
 <div id="chat-screen">
   <div class="chat-header">
     <div class="hdr-left">
-      <div class="avatar" id="my-av"><span class="fireball"></span><span class="waterfill"></span><span class="drop"></span><span class="av-label">؟</span></div>
+      <div class="avatar" id="my-av"><span class="fireball"></span><span class="waterfill"></span><span class="drop"></span></div>
       <div class="hdr-info">
         <div class="hdr-name"><img class="hdr-logo" src="logo.png" alt=""> KokiChat 🔐</div>
         <div class="hdr-status" id="status-txt">در حال اتصال...</div>
@@ -493,8 +478,13 @@ const SUPABASE_ANON_KEY = "sb_publishable_O1-F6Pfaw0Vvm6h9o2tGnw_CbRqOwR9";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const PASSWORD  = "kokmal";
-const ALLOWED   = ["koki", "kokmal"];
+// ⚠️ یه رمز برای هرکدوم — چون فقط یه فیلد رمز داریم، خود رمز مشخص می‌کنه کی وارد شده
+// رمز کوکمال رو خودت گفتی؛ رمز خودت (koki) رو اینجا با یه رمز دلخواه عوض کن
+const PASSWORDS = {
+  kokmal: "kokmal",
+  koki:   "koki"
+};
+const ALLOWED   = Object.keys(PASSWORDS);
 const FRIEND_ID = "kokmal";
 
 const STICKERS = [
@@ -538,11 +528,20 @@ parseEmoji(document.body);
 // LOGIN
 function doLogin() {
   const val = document.getElementById('pwd').value;
-  if (val === PASSWORD) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('name-screen').style.display  = 'flex';
+  const match = Object.entries(PASSWORDS).find(([id, pw]) => pw === val);
+  if (match) {
+    const [id] = match;
+    if (id === FRIEND_ID) {
+      const e = document.getElementById('err');
+      e.classList.add('welcome');
+      e.textContent = 'خوش آمدی دوست عرفان';
+      setTimeout(() => { e.classList.remove('welcome'); e.textContent = ''; pickName(id); }, 1400);
+    } else {
+      pickName(id);
+    }
   } else {
     const e = document.getElementById('err');
+    e.classList.remove('welcome');
     e.textContent = 'رمز اشتباهه!';
     document.getElementById('pwd').value = '';
     setTimeout(() => e.textContent = '', 2000);
@@ -551,25 +550,10 @@ function doLogin() {
 document.getElementById('login-btn').onclick = doLogin;
 document.getElementById('pwd').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-// NAME
-function doNameSubmit() {
-  const val = document.getElementById('name-input').value.trim().toLowerCase();
-  if (ALLOWED.includes(val)) {
-    pickName(val);
-  } else {
-    const e = document.getElementById('name-err');
-    e.textContent = 'نام کاربری اشتباهه!';
-    setTimeout(() => e.textContent = '', 2000);
-  }
-}
-document.getElementById('name-btn').onclick = doNameSubmit;
-document.getElementById('name-input').addEventListener('keydown', e => { if(e.key==='Enter') doNameSubmit(); });
-
 function pickName(name) {
   me = name;
-  document.getElementById('name-screen').style.display  = 'none';
-  document.getElementById('chat-screen').style.display  = 'flex';
-  document.getElementById('my-av').querySelector('.av-label').textContent = name === FRIEND_ID ? 'KM' : name.slice(0,2).toUpperCase();
+  document.getElementById('login-screen').style.display  = 'none';
+  document.getElementById('chat-screen').style.display   = 'flex';
   if (name === FRIEND_ID) document.getElementById('my-av').classList.add('b');
   initChat();
 }
