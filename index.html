@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KokiChat</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --accent: #238636;
+    --accent2: #2ea043;
+    --text: #e6edf3;
+    --text-muted: #7d8590;
+    --msg-me: #1a3a2a;
+    --msg-them: #1c2128;
+    --radius: 12px;
+    --danger: #da3633;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ─── LOGIN ─────────────────────────────────── */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    max-width: 340px;
+    padding: 32px 24px;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #238636, #56d364);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+
+  .login-title { font-size: 22px; font-weight: 600; color: var(--text); }
+  .login-sub   { font-size: 13px; color: var(--text-muted); text-align: center; }
+
+  .input-group { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .input-group label { font-size: 13px; color: var(--text-muted); }
+
+  input[type="password"], input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color .2s;
+    direction: ltr;
+    text-align: center;
+    letter-spacing: 3px;
+  }
+  input:focus { border-color: var(--accent2); }
+
+  .btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn:hover { background: var(--accent2); }
+  .btn.danger { background: var(--danger); }
+
+  .error-msg {
+    font-size: 13px;
+    color: var(--danger);
+    text-align: center;
+    min-height: 18px;
+  }
+
+  /* ─── NAME PICK ──────────────────────────────── */
+  #name-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 340px;
+    padding: 32px 24px;
+  }
+
+  .name-options { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  .name-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color .2s, background .2s;
+  }
+  .name-btn:hover { border-color: var(--accent2); background: #1a2a1a; }
+
+  /* ─── CHAT ───────────────────────────────────── */
+  #chat-screen {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    max-width: 560px;
+    height: 100dvh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #238636, #56d364);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 600; flex-shrink: 0;
+  }
+  .avatar.friend { background: linear-gradient(135deg, #1f6feb, #58a6ff); }
+
+  .header-info { display: flex; flex-direction: column; gap: 1px; }
+  .header-name { font-size: 15px; font-weight: 600; }
+  .header-status { font-size: 12px; color: var(--text-muted); }
+
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .icon-btn {
+    background: none; border: none;
+    color: var(--text-muted);
+    cursor: pointer; padding: 6px; border-radius: 6px;
+    font-size: 16px; transition: color .2s, background .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { color: var(--text); background: var(--surface); }
+
+  /* messages */
+  #messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    scroll-behavior: smooth;
+  }
+
+  #messages::-webkit-scrollbar { width: 4px; }
+  #messages::-webkit-scrollbar-track { background: transparent; }
+  #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .msg-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 75%;
+  }
+  .msg-wrapper.me { align-self: flex-start; align-items: flex-start; }
+  .msg-wrapper.them { align-self: flex-end; align-items: flex-end; }
+
+  .msg-bubble {
+    padding: 9px 13px;
+    border-radius: var(--radius);
+    font-size: 14.5px;
+    line-height: 1.6;
+    word-break: break-word;
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .msg-wrapper.me   .msg-bubble { background: var(--msg-me);   border-bottom-right-radius: 4px; }
+  .msg-wrapper.them .msg-bubble { background: var(--msg-them); border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+
+  .msg-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    padding: 0 4px;
+  }
+
+  .date-divider {
+    align-self: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    margin: 8px 0;
+  }
+
+  /* file message */
+  .file-msg {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; cursor: pointer;
+    transition: border-color .2s;
+    text-decoration: none; color: inherit;
+  }
+  .file-msg:hover { border-color: var(--accent2); }
+  .file-icon { font-size: 24px; }
+  .file-info { display: flex; flex-direction: column; gap: 2px; }
+  .file-name { font-size: 13px; font-weight: 500; }
+  .file-size { font-size: 11px; color: var(--text-muted); }
+
+  /* image preview */
+  .img-msg { max-width: 220px; border-radius: 8px; cursor: pointer; display: block; }
+
+  /* input area */
+  .chat-input {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+    flex-shrink: 0;
+  }
+
+  #file-input { display: none; }
+
+  .attach-btn {
+    background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-size: 20px; padding: 6px;
+    border-radius: 8px; transition: color .2s;
+    flex-shrink: 0;
+  }
+  .attach-btn:hover { color: var(--accent2); }
+
+  #msg-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 14px;
+    padding: 9px 13px;
+    resize: none;
+    outline: none;
+    max-height: 120px;
+    overflow-y: auto;
+    line-height: 1.5;
+    transition: border-color .2s;
+    direction: rtl;
+  }
+  #msg-input:focus { border-color: var(--accent2); }
+  #msg-input::placeholder { color: var(--text-muted); }
+
+  .send-btn {
+    background: var(--accent);
+    border: none; border-radius: 10px;
+    color: #fff; cursor: pointer;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+    transition: background .2s;
+  }
+  .send-btn:hover { background: var(--accent2); }
+
+  /* upload progress */
+  .upload-progress {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px;
+    font-size: 13px; color: var(--text-muted);
+    display: none;
+  }
+
+  /* notification badge */
+  .notif-dot {
+    width: 8px; height: 8px;
+    background: var(--accent2);
+    border-radius: 50%;
+    display: none;
+  }
+
+  /* image lightbox */
+  #lightbox {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.85); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+  #lightbox-close {
+    position: absolute; top: 16px; left: 16px;
+    background: var(--surface2); border: none;
+    color: var(--text); font-size: 22px; cursor: pointer;
+    border-radius: 8px; padding: 4px 10px;
+  }
+
+  /* setup modal */
+  #setup-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  #setup-modal.open { display: flex; }
+  .modal-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px;
+    width: 90%; max-width: 460px;
+    display: flex; flex-direction: column; gap: 16px;
+    direction: rtl;
+  }
+  .modal-title { font-size: 16px; font-weight: 600; }
+  .modal-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .field-row { display: flex; flex-direction: column; gap: 6px; }
+  .field-row label { font-size: 12px; color: var(--text-muted); }
+  .field-row input {
+    letter-spacing: 0; text-align: right; direction: ltr; text-align: left;
+    font-size: 13px; padding: 9px 12px;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .modal-actions .btn { font-size: 14px; padding: 10px; }
+  .btn-secondary {
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'Vazirmatn', sans-serif; font-size: 14px;
+    padding: 10px; cursor: pointer; flex: 1;
+    transition: border-color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent2); }
+
+  .online-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #3fb950; display: inline-block;
+    box-shadow: 0 0 0 2px var(--surface2);
+  }
+
+  @media(max-width:560px){
+    #chat-screen { border: none; }
+    .msg-wrapper { max-width: 85%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="logo">💬</div>
+  <div class="login-title">KokiChat</div>
+  <div class="login-sub">یه فضای خصوصی برای گفتگو</div>
+  <div class="input-group">
+    <label>رمز عبور</label>
+    <input type="password" id="pwd-input" placeholder="••••••" autofocus />
+  </div>
+  <div class="error-msg" id="login-err"></div>
+  <button class="btn" onclick="doLogin()">ورود</button>
+</div>
+
+<!-- NAME PICK -->
+<div id="name-screen">
+  <div class="logo">👤</div>
+  <div class="login-title">تو کدوم طرفی؟</div>
+  <div class="login-sub">انتخاب کن که پیام‌هات با چه اسمی نشون داده بشه</div>
+  <div class="name-options">
+    <button class="name-btn" onclick="pickName('عرفان')">👑 عرفان (صاحب چت)</button>
+    <button class="name-btn" onclick="pickName('دوست')">🙋 دوست</button>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div id="chat-screen">
+  <div class="chat-header">
+    <div class="header-left">
+      <div class="avatar" id="my-avatar">ع</div>
+      <div class="header-info">
+        <div class="header-name" id="my-name-label">KokiChat</div>
+        <div class="header-status" id="other-status">در حال بارگذاری...</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="notif-dot" id="notif-dot"></div>
+      <button class="icon-btn" title="تنظیمات اعلان" onclick="openSetup()">⚙️</button>
+      <button class="icon-btn" title="خروج" onclick="logout()">🚪</button>
+    </div>
+  </div>
+
+  <div id="messages"></div>
+
+  <div class="chat-input">
+    <input type="file" id="file-input" onchange="handleFile(this)" />
+    <button class="attach-btn" onclick="document.getElementById('file-input').click()">📎</button>
+    <textarea id="msg-input" rows="1" placeholder="پیام بده..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<div class="upload-progress" id="upload-prog">در حال آپلود فایل...</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" />
+</div>
+
+<!-- SETUP MODAL -->
+<div id="setup-modal">
+  <div class="modal-box">
+    <div class="modal-title">⚙️ تنظیمات Firebase و اعلان</div>
+    <div class="modal-desc">
+      برای اینکه پیام‌ها ذخیره بشن و اعلان Telegram کار کنه،
+      اطلاعات زیر رو وارد کن. این اطلاعات فقط داخل مرورگر ذخیره می‌شه.
+    </div>
+    <div class="field-row">
+      <label>Firebase Database URL</label>
+      <input type="text" id="cfg-db" placeholder="https://your-app.firebaseio.com" />
+    </div>
+    <div class="field-row">
+      <label>Firebase API Key</label>
+      <input type="text" id="cfg-key" placeholder="AIzaSy..." />
+    </div>
+    <div class="field-row">
+      <label>Firebase Storage Bucket</label>
+      <input type="text" id="cfg-bucket" placeholder="your-app.appspot.com" />
+    </div>
+    <div class="field-row">
+      <label>Firebase Project ID</label>
+      <input type="text" id="cfg-proj" placeholder="your-project-id" />
+    </div>
+    <div class="field-row">
+      <label>Telegram Bot Token (برای اعلان دوست)</label>
+      <input type="text" id="cfg-tg-token" placeholder="123456:ABC..." />
+    </div>
+    <div class="field-row">
+      <label>Telegram Chat ID عرفان</label>
+      <input type="text" id="cfg-tg-chatid" placeholder="12345678" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeSetup()">انصراف</button>
+      <button class="btn" onclick="saveConfig()" style="flex:1">ذخیره و اتصال</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script type="module">
+import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, serverTimestamp, onDisconnect, set, get }
+                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
+                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+// ─── CONFIG ──────────────────────────────────────────────
+const PASSWORD    = "kokmal";
+const DEMO_MODE   = false; // will flip to true if Firebase not configured
+
+let db, storage, fbApp;
+let currentUser   = null;
+let lastMsgDate   = null;
+let configLoaded  = false;
+let unreadFromFriend = false;
+let isVisible     = true;
+
+// ─── PERSISTED CONFIG ─────────────────────────────────────
+function loadConfig() {
+  try {
+    return JSON.parse(localStorage.getItem('kokichat_cfg') || 'null');
+  } catch { return null; }
+}
+function saveConfigData(c) {
+  localStorage.setItem('kokichat_cfg', JSON.stringify(c));
+}
+
+// ─── FIREBASE INIT ────────────────────────────────────────
+function initFirebase(cfg) {
+  try {
+    fbApp   = initializeApp(cfg.firebase, 'kokichat');
+    db      = getDatabase(fbApp);
+    storage = getStorage(fbApp);
+    configLoaded = true;
+    return true;
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    return false;
+  }
+}
+
+// ─── LOGIN ────────────────────────────────────────────────
+window.doLogin = function() {
+  const v = document.getElementById('pwd-input').value;
+  if (v === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('name-screen').style.display  = 'flex';
+    // try to load saved config
+    const cfg = loadConfig();
+    if (cfg) initFirebase(cfg);
+  } else {
+    document.getElementById('login-err').textContent = 'رمز اشتباه است';
+    document.getElementById('pwd-input').value = '';
+    setTimeout(()=> document.getElementById('login-err').textContent = '', 2000);
+  }
+};
+document.getElementById('pwd-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ─── NAME PICK ────────────────────────────────────────────
+window.pickName = function(name) {
+  currentUser = name;
+  document.getElementById('name-screen').style.display  = 'none';
+  document.getElementById('chat-screen').style.display  = 'flex';
+
+  // header
+  document.getElementById('my-name-label').textContent =
+    name === 'عرفان' ? '💬 KokiChat — عرفان' : '💬 KokiChat — دوست';
+  document.getElementById('my-avatar').textContent = name === 'عرفان' ? 'ع' : 'د';
+
+  if (!configLoaded) {
+    showDemoMode();
+    openSetup();
+  } else {
+    connectChat();
+  }
+};
+
+// ─── DEMO MODE ────────────────────────────────────────────
+function showDemoMode() {
+  addSystemMsg('⚠️ Firebase هنوز تنظیم نشده — پیام‌ها ذخیره نمی‌شن. روی ⚙️ کلیک کن و اطلاعات Firebase رو وارد کن.');
+  document.getElementById('other-status').textContent = 'حالت آزمایشی';
+}
+
+// ─── CONNECT CHAT ─────────────────────────────────────────
+function connectChat() {
+  document.getElementById('other-status').textContent = 'در حال اتصال...';
+  const msgsRef = ref(db, 'messages');
+
+  // presence
+  const presRef = ref(db, `presence/${currentUser}`);
+  set(presRef, { online: true, ts: Date.now() });
+  onDisconnect(presRef).set({ online: false, ts: Date.now() });
+
+  // watch other user presence
+  const otherName = currentUser === 'عرفان' ? 'دوست' : 'عرفان';
+  onValue(ref(db, `presence/${otherName}`), snap => {
+    const d = snap.val();
+    const statusEl = document.getElementById('other-status');
+    if (d && d.online) {
+      statusEl.innerHTML = `<span class="online-dot"></span> ${otherName} آنلاین`;
+    } else if (d && d.ts) {
+      const ago = timeAgo(d.ts);
+      statusEl.textContent = `${otherName} — آخرین بازدید ${ago}`;
+    } else {
+      statusEl.textContent = `${otherName} آفلاین`;
+    }
+  });
+
+  // listen messages
+  onValue(msgsRef, snap => {
+    const msgs = snap.val() || {};
+    renderMessages(msgs);
+  });
+
+  document.getElementById('other-status').textContent = 'متصل';
+}
+
+// ─── RENDER MESSAGES ──────────────────────────────────────
+function renderMessages(msgs) {
+  const container = document.getElementById('messages');
+  const wasAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 60;
+  container.innerHTML = '';
+  lastMsgDate = null;
+
+  Object.values(msgs)
+    .sort((a,b) => a.ts - b.ts)
+    .forEach(m => renderOne(m));
+
+  if (wasAtBottom) container.scrollTop = container.scrollHeight;
+}
+
+function renderOne(m) {
+  const container = document.getElementById('messages');
+  const isMe = m.sender === currentUser;
+
+  // date divider
+  if (m.ts) {
+    const d = new Date(m.ts);
+    const dKey = d.toDateString();
+    if (dKey !== lastMsgDate) {
+      lastMsgDate = dKey;
+      const div = document.createElement('div');
+      div.className = 'date-divider';
+      div.textContent = formatDate(d);
+      container.appendChild(div);
+    }
+  }
+
+  if (m.type === 'system') {
+    const div = document.createElement('div');
+    div.className = 'date-divider';
+    div.textContent = m.text;
+    container.appendChild(div);
+    return;
+  }
+
+  const wrapper = document.createElement('div');
+  wrapper.className = `msg-wrapper ${isMe ? 'me' : 'them'}`;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+
+  if (m.type === 'image') {
+    const img = document.createElement('img');
+    img.src = m.url;
+    img.className = 'img-msg';
+    img.loading = 'lazy';
+    img.onclick = () => openLightbox(m.url);
+    bubble.appendChild(img);
+  } else if (m.type === 'file') {
+    const a = document.createElement('a');
+    a.className = 'file-msg';
+    a.href = m.url; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = `<span class="file-icon">📄</span>
+      <div class="file-info">
+        <div class="file-name">${escHtml(m.fileName)}</div>
+        <div class="file-size">${formatBytes(m.fileSize)}</div>
+      </div>`;
+    bubble.appendChild(a);
+  } else {
+    bubble.textContent = m.text;
+  }
+
+  const meta = document.createElement('div');
+  meta.className = 'msg-meta';
+  const t = m.ts ? new Date(m.ts) : new Date();
+  meta.textContent = `${isMe ? '' : m.sender + ' · '}${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}`;
+
+  wrapper.appendChild(bubble);
+  wrapper.appendChild(meta);
+  container.appendChild(wrapper);
+
+  // notify if message from friend and tab hidden
+  if (!isMe && m.ts && Date.now() - m.ts < 5000) {
+    if (document.hidden) {
+      document.title = '💬 پیام جدید!';
+      unreadFromFriend = true;
+      document.getElementById('notif-dot').style.display = 'block';
+    }
+  }
+}
+
+function addSystemMsg(text) {
+  const container = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'date-divider';
+  div.style.maxWidth = '90%';
+  div.style.whiteSpace = 'normal';
+  div.style.textAlign = 'center';
+  div.textContent = text;
+  container.appendChild(div);
+}
+
+// ─── SEND MESSAGE ─────────────────────────────────────────
+window.sendMessage = async function() {
+  if (!currentUser) return;
+  const input = document.getElementById('msg-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+
+  if (!configLoaded) {
+    addSystemMsg('⚠️ Firebase تنظیم نشده. ابتدا روی ⚙️ کلیک کن.');
+    return;
+  }
+
+  const msg = { sender: currentUser, type: 'text', text, ts: Date.now() };
+  await push(ref(db, 'messages'), msg);
+
+  // telegram notif if sender is friend
+  if (currentUser !== 'عرفان') {
+    sendTelegramNotif(`💬 پیام از دوست:\n${text}`);
+  }
+};
+
+// ─── FILE UPLOAD ──────────────────────────────────────────
+window.handleFile = async function(input) {
+  if (!input.files.length) return;
+  if (!configLoaded) { addSystemMsg('⚠️ Firebase تنظیم نشده.'); return; }
+
+  const file = input.files[0];
+  input.value = '';
+
+  // 20 MB limit
+  if (file.size > 20 * 1024 * 1024) {
+    alert('حداکثر حجم فایل ۲۰ مگابایت است.'); return;
+  }
+
+  const prog = document.getElementById('upload-prog');
+  prog.style.display = 'block';
+
+  try {
+    const path  = `files/${Date.now()}_${file.name}`;
+    const fRef  = sRef(storage, path);
+    await uploadBytes(fRef, file);
+    const url   = await getDownloadURL(fRef);
+
+    const isImage = file.type.startsWith('image/');
+    const msg = {
+      sender: currentUser,
+      type: isImage ? 'image' : 'file',
+      url, fileName: file.name, fileSize: file.size,
+      ts: Date.now()
+    };
+    await push(ref(db, 'messages'), msg);
+
+    if (currentUser !== 'عرفان') {
+      sendTelegramNotif(`📎 فایل از دوست: ${file.name}`);
+    }
+  } catch(e) {
+    console.error(e);
+    alert('آپلود فایل با خطا مواجه شد: ' + e.message);
+  } finally {
+    prog.style.display = 'none';
+  }
+};
+
+// ─── TELEGRAM NOTIF ───────────────────────────────────────
+async function sendTelegramNotif(text) {
+  const cfg = loadConfig();
+  if (!cfg || !cfg.tgToken || !cfg.tgChatId) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${cfg.tgToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: cfg.tgChatId, text })
+    });
+  } catch(e) { console.warn('Telegram notif failed:', e); }
+}
+
+// ─── SETUP MODAL ──────────────────────────────────────────
+window.openSetup = function() {
+  const cfg = loadConfig();
+  if (cfg) {
+    document.getElementById('cfg-db').value       = cfg.firebase?.databaseURL  || '';
+    document.getElementById('cfg-key').value      = cfg.firebase?.apiKey        || '';
+    document.getElementById('cfg-bucket').value   = cfg.firebase?.storageBucket || '';
+    document.getElementById('cfg-proj').value     = cfg.firebase?.projectId     || '';
+    document.getElementById('cfg-tg-token').value = cfg.tgToken   || '';
+    document.getElementById('cfg-tg-chatid').value= cfg.tgChatId  || '';
+  }
+  document.getElementById('setup-modal').classList.add('open');
+};
+window.closeSetup = function() {
+  document.getElementById('setup-modal').classList.remove('open');
+};
+window.saveConfig = function() {
+  const cfg = {
+    firebase: {
+      apiKey:        document.getElementById('cfg-key').value.trim(),
+      authDomain:    document.getElementById('cfg-proj').value.trim() + '.firebaseapp.com',
+      databaseURL:   document.getElementById('cfg-db').value.trim(),
+      projectId:     document.getElementById('cfg-proj').value.trim(),
+      storageBucket: document.getElementById('cfg-bucket').value.trim(),
+      messagingSenderId: '000000000000',
+      appId: '1:000:web:000'
+    },
+    tgToken:  document.getElementById('cfg-tg-token').value.trim(),
+    tgChatId: document.getElementById('cfg-tg-chatid').value.trim()
+  };
+  if (!cfg.firebase.apiKey || !cfg.firebase.databaseURL) {
+    alert('API Key و Database URL رو حتماً وارد کن.'); return;
+  }
+  saveConfigData(cfg);
+  closeSetup();
+  const ok = initFirebase(cfg);
+  if (ok) {
+    document.getElementById('messages').innerHTML = '';
+    connectChat();
+  } else {
+    addSystemMsg('❌ اتصال به Firebase ناموفق بود. اطلاعات رو بررسی کن.');
+  }
+};
+
+// ─── HELPERS ──────────────────────────────────────────────
+window.handleKey = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+};
+window.autoResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+};
+window.logout = function() {
+  if (!confirm('از چت خارج بشی؟')) return;
+  if (db && currentUser) {
+    set(ref(db, `presence/${currentUser}`), { online: false, ts: Date.now() });
+  }
+  location.reload();
+};
+
+window.openLightbox = function(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+};
+window.closeLightbox = function() {
+  document.getElementById('lightbox').classList.remove('open');
+};
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+// tab visibility
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && unreadFromFriend) {
+    document.title = 'KokiChat';
+    unreadFromFriend = false;
+    document.getElementById('notif-dot').style.display = 'none';
+  }
+});
+
+function formatDate(d) {
+  const now = new Date();
+  const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
+  if (d.toDateString() === now.toDateString()) return 'امروز';
+  if (d.toDateString() === yesterday.toDateString()) return 'دیروز';
+  return d.toLocaleDateString('fa-IR');
+}
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000)  return 'همین الان';
+  if (diff < 3600000) return Math.floor(diff/60000) + ' دقیقه پیش';
+  if (diff < 86400000) return Math.floor(diff/3600000) + ' ساعت پیش';
+  return Math.floor(diff/86400000) + ' روز پیش';
+}
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
