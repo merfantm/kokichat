@@ -108,7 +108,6 @@ input[type="password"]:focus{
 .btn-primary:active{transform:scale(.98)}
 
 .err{font-size:13px;color:#f87171;text-align:center;min-height:18px;transition:color .2s}
-.err.welcome{color:#7dd3fc;font-weight:600}
 
 /* CHAT */
 #chat-screen{
@@ -123,7 +122,7 @@ input[type="password"]:focus{
 }
 
 .chat-header{
-  position:relative;overflow:hidden;
+  position:relative;overflow:visible;
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 16px;
   background:rgba(56,189,248,0.07);
@@ -193,6 +192,26 @@ input[type="password"]:focus{
 }
 .icon-btn:hover{color:#e8eaf0;background:rgba(255,255,255,0.07)}
 
+#hdr-menu{
+  display:none;flex-direction:column;
+  position:absolute;top:44px;left:0;
+  background:rgba(20,30,42,0.55);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:14px;padding:6px;
+  min-width:180px;z-index:60;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 34px rgba(0,0,0,0.5);
+}
+#hdr-menu.open{display:flex}
+.menu-item{
+  padding:10px 12px;border-radius:9px;font-size:13.5px;
+  cursor:pointer;transition:background .15s;white-space:nowrap;
+  text-align:right;
+}
+.menu-item:hover{background:rgba(56,189,248,0.16)}
+.menu-item.danger:hover{background:rgba(248,113,113,0.16)}
+
 #messages{
   flex:1;overflow-y:auto;
   padding:16px 14px;
@@ -207,20 +226,37 @@ input[type="password"]:focus{
 .msg-wrap.them{align-self:flex-end;align-items:flex-end}
 
 .bubble{
-  padding:9px 13px;border-radius:16px;
+  position:relative;overflow:hidden;
+  padding:10px 14px;border-radius:19px;
   font-size:14.5px;line-height:1.65;
   word-break:break-word;white-space:pre-wrap;
+  box-shadow:0 3px 10px rgba(0,0,0,0.18);
+}
+.bubble::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(160deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 45%);
 }
 .msg-wrap.me .bubble{
-  background:rgba(56,189,248,0.18);
-  border:1px solid rgba(56,189,248,0.32);
-  border-bottom-right-radius:4px;
+  background:rgba(56,189,248,0.24);
+  backdrop-filter:blur(14px) saturate(160%);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(56,189,248,0.4);
+  border-bottom-right-radius:5px;
 }
 .msg-wrap.them .bubble{
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  border-bottom-left-radius:4px;
-  backdrop-filter:blur(8px);
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px) saturate(160%);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
+  border-bottom-left-radius:5px;
+}
+.msg-wrap:last-child .bubble{
+  animation:bubblePop .38s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes bubblePop{
+  0%{transform:scale(.6);opacity:0;}
+  70%{transform:scale(1.04);opacity:1;}
+  100%{transform:scale(1);}
 }
 .msg-meta{font-size:11px;color:rgba(243,239,228,0.28);margin-top:3px;padding:0 3px}
 
@@ -228,6 +264,7 @@ input[type="password"]:focus{
   align-self:center;font-size:11.5px;
   color:rgba(243,239,228,0.3);
   background:rgba(56,189,248,0.08);
+  backdrop-filter:blur(10px);
   border:1px solid rgba(56,189,248,0.18);
   border-radius:20px;padding:3px 14px;
   margin:8px 0;
@@ -235,8 +272,10 @@ input[type="password"]:focus{
 
 .sticker-bubble{
   background:none!important;border:none!important;
+  box-shadow:none!important;backdrop-filter:none!important;
   font-size:52px;line-height:1.2;padding:4px 8px!important;
 }
+.sticker-bubble::before{display:none}
 
 .chat-input{
   display:flex;align-items:flex-end;gap:8px;
@@ -285,13 +324,14 @@ input[type="password"]:focus{
 
 #sticker-panel{
   position:absolute;bottom:68px;right:12px;
-  background:rgba(11,10,9,0.97);
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(56,189,248,0.22);
+  background:rgba(20,30,42,0.45);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
   border-radius:16px;padding:12px;
   display:none;flex-wrap:wrap;gap:6px;
   width:240px;z-index:50;
-  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 34px rgba(0,0,0,0.5);
 }
 #sticker-panel.open{display:flex}
 .stk{
@@ -306,25 +346,26 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
 
 #quick-panel{
   position:absolute;bottom:68px;right:56px;
-  background:rgba(11,10,9,0.97);
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(56,189,248,0.22);
+  background:rgba(20,30,42,0.45);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
   border-radius:16px;padding:10px;
   display:none;flex-direction:column;gap:6px;
   width:230px;z-index:50;
-  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 34px rgba(0,0,0,0.5);
 }
 #quick-panel.open{display:flex}
 .quick-item{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
   border-radius:10px;color:#f3efe4;
   font-family:'Vazirmatn',sans-serif;
   font-size:13px;text-align:right;
   padding:9px 11px;cursor:pointer;
   transition:background .15s,border-color .15s;
 }
-.quick-item:hover{background:rgba(56,189,248,0.15);border-color:rgba(56,189,248,0.35)}
+.quick-item:hover{background:rgba(56,189,248,0.18);border-color:rgba(56,189,248,0.4)}
 
 .send-btn.sending{animation:sendPulse .45s ease;}
 @keyframes sendPulse{
@@ -348,11 +389,14 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
 }
 #cfg-modal.open{display:flex}
 .modal-box{
-  background:rgba(11,10,9,0.98);
-  border:1px solid rgba(56,189,248,0.2);
+  background:rgba(20,30,42,0.55);
+  backdrop-filter:blur(30px) saturate(160%);
+  -webkit-backdrop-filter:blur(30px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
   border-radius:20px;padding:28px 22px;
   width:92%;max-width:360px;
   display:flex;flex-direction:column;gap:14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 20px 60px rgba(0,0,0,0.5);
 }
 .modal-title{font-size:16px;font-weight:700}
 .modal-desc{font-size:12.5px;color:rgba(243,239,228,0.4);line-height:1.7}
@@ -426,8 +470,12 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
     </div>
     <div class="hdr-right">
       <div class="n-dot" id="ndot"></div>
-      <button class="icon-btn" onclick="openCfg()">⚙️</button>
-      <button class="icon-btn" onclick="doLogout()">🚪</button>
+      <button class="icon-btn" onclick="toggleMenu()">☰</button>
+      <div id="hdr-menu">
+        <div class="menu-item" onclick="toggleMenu(false);openCfg()">⚙️ تنظیمات اعلان</div>
+        <div class="menu-item" onclick="toggleMenu(false);confirmClearHistory()">🗑️ حذف تاریخچه</div>
+        <div class="menu-item danger" onclick="toggleMenu(false);doLogout()">🚪 خروج</div>
+      </div>
     </div>
   </div>
 
@@ -530,18 +578,9 @@ function doLogin() {
   const val = document.getElementById('pwd').value;
   const match = Object.entries(PASSWORDS).find(([id, pw]) => pw === val);
   if (match) {
-    const [id] = match;
-    if (id === FRIEND_ID) {
-      const e = document.getElementById('err');
-      e.classList.add('welcome');
-      e.textContent = 'خوش آمدی دوست عرفان';
-      setTimeout(() => { e.classList.remove('welcome'); e.textContent = ''; pickName(id); }, 1400);
-    } else {
-      pickName(id);
-    }
+    pickName(match[0]);
   } else {
     const e = document.getElementById('err');
-    e.classList.remove('welcome');
     e.textContent = 'رمز اشتباهه!';
     document.getElementById('pwd').value = '';
     setTimeout(() => e.textContent = '', 2000);
@@ -728,6 +767,11 @@ window.saveCfg = () => {
   closeCfg();
 };
 
+let menuOpen = false;
+window.toggleMenu = (force) => {
+  menuOpen = force !== undefined ? force : !menuOpen;
+  document.getElementById('hdr-menu').classList.toggle('open', menuOpen);
+};
 window.toggleStk = (force) => {
   stkOpen = force !== undefined ? force : !stkOpen;
   document.getElementById('sticker-panel').classList.toggle('open', stkOpen);
@@ -741,7 +785,15 @@ window.toggleQuick = (force) => {
 document.addEventListener('click', e => {
   if (stkOpen && !e.target.closest('#sticker-panel') && !e.target.closest('.icon-btn')) toggleStk(false);
   if (quickOpen && !e.target.closest('#quick-panel') && !e.target.closest('.icon-btn')) toggleQuick(false);
+  if (menuOpen && !e.target.closest('#hdr-menu') && !e.target.closest('.icon-btn')) toggleMenu(false);
 });
+
+window.confirmClearHistory = async () => {
+  if (!confirm('همه‌ی پیام‌ها برای همیشه پاک بشن؟')) return;
+  await supabase.from('messages').delete().gt('id', 0);
+  msgCache = [];
+  renderAll(msgCache);
+};
 
 window.onKey  = e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} };
 window.grow   = el => { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; };
