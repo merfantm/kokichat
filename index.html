@@ -623,6 +623,12 @@ const PASSWORDS = {
 const ALLOWED   = Object.keys(PASSWORDS);
 const FRIEND_ID = "kokmal";
 
+// اعلان بله برای صاحب سایت (koki) — این مستقیم تو کد ثابته، پس مهم نیست
+// دوستت (kokmal) از کدوم گوشی وارد بشه، همیشه به همین آیدی اعلان می‌ره.
+// اگه بخوای عوضش کنی، فقط همین دو مقدار رو ویرایش کن.
+const KOKI_BALE_TOKEN  = "1982906672:9tLa7AJ1iidylH_tV-QBwaljXxi0Lbzv4";
+const KOKI_BALE_CHATID = "857189798";
+
 const STICKERS = [
   "😂","😍","🥰","😎","🤣","😭","🙏","👍","❤️","🔥",
   "😅","🤩","😜","🥳","😊","💪","🤦","🙈","💀","✅",
@@ -842,11 +848,24 @@ function renderOne(m) {
     document.title = '💬 پیام جدید!';
     unread = true;
     document.getElementById('ndot').style.display = 'block';
-    sendBale(`💬 پیام از ${m.sender}:\n${m.type==='sticker' ? m.text+' (استیکر)' : (m.text||'').slice(0,80)}`);
   }
 }
 
 let replyingTo = null;
+
+// وقتی kokmal پیام می‌ده، اگه koki همین الان آنلاین/فعال نیست، به بله‌ی koki خبر بده
+async function notifyOwnerIfOffline(text) {
+  if (me !== FRIEND_ID) return;
+  try {
+    const { data } = await supabase.from('presence').select('*').eq('name', 'koki').maybeSingle();
+    const isOnline = data?.online && (Date.now() - data.ts < 20000);
+    if (isOnline) return;
+  } catch (e) { /* اگه چک کردن آنلاین بودن هم خطا داد، برای احتیاط اعلان رو بفرست */ }
+  const url = `https://tapi.bale.ai/bot${KOKI_BALE_TOKEN}/sendMessage`
+    + `?chat_id=${encodeURIComponent(KOKI_BALE_CHATID)}&text=${encodeURIComponent(text)}`;
+  try { await fetch(url, { method: 'GET', mode: 'no-cors' }); }
+  catch (e) { console.error('Bale owner-notify failed:', e); }
+}
 
 async function sendMsg() {
   if (!me) return;
@@ -858,7 +877,7 @@ async function sendMsg() {
   const payload = { sender: me, type: 'text', text: txt, ts: Date.now() };
   if (replyingTo) { payload.reply_to = replyingTo; cancelReply(); }
   await supabase.from('messages').insert(payload);
-  if (me === FRIEND_ID) sendBale(`💬 پیام:\n${txt.slice(0,100)}`);
+  notifyOwnerIfOffline(`💬 پیام از kokmal:\n${txt.slice(0,100)}`);
 }
 window.sendMsg = sendMsg;
 
@@ -875,7 +894,7 @@ async function sendStk(s) {
   const payload = { sender: me, type: 'sticker', text: s, ts: Date.now() };
   if (replyingTo) { payload.reply_to = replyingTo; cancelReply(); }
   await supabase.from('messages').insert(payload);
-  if (me === FRIEND_ID) sendBale(`${s} استیکر`);
+  notifyOwnerIfOffline(`${s} استیکر از kokmal`);
 }
 
 async function sendQuick(text) {
@@ -884,7 +903,7 @@ async function sendQuick(text) {
   const payload = { sender: me, type: 'text', text, ts: Date.now() };
   if (replyingTo) { payload.reply_to = replyingTo; cancelReply(); }
   await supabase.from('messages').insert(payload);
-  if (me === FRIEND_ID) sendBale(`💬 پیام:\n${text.slice(0,100)}`);
+  notifyOwnerIfOffline(`💬 پیام از kokmal:\n${text.slice(0,100)}`);
 }
 
 // --- message actions: menu, copy, share, edit, reply ---
