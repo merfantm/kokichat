@@ -996,23 +996,15 @@ window.cancelReply = () => { replyingTo = null; renderReplyBar(); };
 async function sendBale(text) {
   const cfg = loadCfg();
   if (!cfg?.token || !cfg?.chatId) { return { ok: false, info: 'تنظیمات خالیه' }; }
+  // توجه: سرور بله به مرورگر اجازه‌ی خوندن جواب رو نمی‌ده (CORS)، برای همین با GET
+  // و حالت no-cors می‌فرستیم — درخواست واقعاً می‌ره، ولی نمی‌تونیم از اینجا تأیید بگیریم.
+  const url = `https://tapi.bale.ai/bot${cfg.token}/sendMessage`
+    + `?chat_id=${encodeURIComponent(cfg.chatId)}&text=${encodeURIComponent(text)}`;
   try {
-    const res = await fetch(`https://tapi.bale.ai/bot${cfg.token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: cfg.chatId, text })
-    });
-    const body = await res.text();
-    if (!res.ok) {
-      const info = `خطا ${res.status}: ${body.slice(0,140)}`;
-      console.error('Bale error:', res.status, body);
-      toast('❌ ' + info);
-      return { ok: false, info };
-    }
-    console.log('Bale sent OK:', body);
-    return { ok: true, info: body };
+    await fetch(url, { method: 'GET', mode: 'no-cors' });
+    return { ok: true, info: 'درخواست فرستاده شد (بدون تأیید، چون بله CORS رو می‌بنده)' };
   } catch(e) {
-    const info = 'خطای شبکه/CORS: ' + (e?.message || e);
+    const info = 'خطای شبکه: ' + (e?.message || e);
     console.error('Bale fetch failed:', e);
     toast('❌ ' + info);
     return { ok: false, info };
@@ -1042,7 +1034,7 @@ window.testCfg = async () => {
   localStorage.setItem('koki_bale', JSON.stringify({ token, chatId }));
   toast('در حال ارسال...');
   const r = await sendBale('✅ پیام تست از KokiChat');
-  if (r.ok) toast('✅ رسید! بله رو چک کن');
+  if (r.ok) setTimeout(() => toast('فرستاده شد — الان اپ بله رو چک کن 👀'), 1700);
 };
 
 let menuOpen = false;
