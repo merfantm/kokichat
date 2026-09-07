@@ -114,7 +114,9 @@ input[type="password"]:focus{
   position:relative;overflow:hidden;
   display:none;flex-direction:column;
   width:100%;max-width:580px;height:100dvh;
-  background:rgba(11,10,9,0.72);
+  background:
+    linear-gradient(rgba(5,9,16,0.66), rgba(5,9,16,0.72)),
+    url('chat-bg.jpg') center/cover no-repeat;
   backdrop-filter:blur(36px) saturate(150%);
   -webkit-backdrop-filter:blur(36px) saturate(150%);
   border-left:1px solid rgba(255,255,255,0.08);
@@ -276,6 +278,82 @@ input[type="password"]:focus{
   font-size:52px;line-height:1.2;padding:4px 8px!important;
 }
 .sticker-bubble::before{display:none}
+
+.msg-text{display:block}
+.in-bubble-meta{
+  display:flex;justify-content:flex-end;
+  font-size:10.5px;opacity:.55;margin-top:3px;white-space:nowrap;
+}
+.sticker-bubble .in-bubble-meta{padding:0 4px}
+
+.reply-quote{
+  border-right:3px solid rgba(255,255,255,0.35);
+  background:rgba(255,255,255,0.07);
+  border-radius:8px;
+  padding:5px 8px;margin-bottom:6px;
+  max-width:100%;
+}
+.msg-wrap.me .reply-quote{border-right-color:rgba(255,255,255,0.5)}
+.reply-quote-who{font-size:11px;font-weight:700;opacity:.8;margin-bottom:1px}
+.reply-quote-text{font-size:12px;opacity:.65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+#msg-menu{
+  display:none;flex-direction:column;
+  position:fixed;
+  background:rgba(20,30,42,0.55);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:14px;padding:6px;
+  min-width:170px;z-index:120;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 34px rgba(0,0,0,0.5);
+}
+#msg-menu.open{display:flex}
+#msg-menu .menu-item{text-align:right}
+
+#reply-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;
+  background:rgba(56,189,248,0.08);
+  backdrop-filter:blur(20px) saturate(150%);
+  -webkit-backdrop-filter:blur(20px) saturate(150%);
+  border-top:1px solid rgba(255,255,255,0.1);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.reply-bar-text{flex:1;overflow:hidden;font-size:12.5px}
+.reply-bar-who{font-weight:700;color:#7dd3fc}
+.reply-bar-snip{opacity:.6;margin-inline-start:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reply-bar-x{
+  background:rgba(255,255,255,0.08);border:none;color:#e8eaf0;
+  width:24px;height:24px;border-radius:50%;cursor:pointer;flex-shrink:0;
+  font-size:12px;
+}
+
+.edit-textarea{
+  width:100%;min-width:160px;background:rgba(0,0,0,0.25);
+  border:1px solid rgba(255,255,255,0.2);border-radius:10px;
+  color:#e8eaf0;font-family:'Vazirmatn',sans-serif;font-size:14px;
+  padding:8px 10px;outline:none;resize:none;min-height:44px;
+}
+.edit-actions{display:flex;gap:6px;margin-top:6px;justify-content:flex-end}
+.edit-save,.edit-cancel{
+  border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;
+  font-family:'Vazirmatn',sans-serif;
+}
+.edit-save{background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#062430;font-weight:700}
+.edit-cancel{background:rgba(255,255,255,0.1);color:#e8eaf0}
+
+#toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:rgba(20,30,42,0.75);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:999px;padding:8px 18px;font-size:12.5px;color:#e8eaf0;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  z-index:300;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 .chat-input{
   display:flex;align-items:flex-end;gap:8px;
@@ -516,6 +594,7 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
   <img id="lb-img" src="" />
 </div>
 
+<div id="msg-menu"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -637,7 +716,16 @@ async function initChat() {
 
   supabase.channel('messages-changes')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-      msgCache.push(payload.new);
+      if (!msgCache.some(x => x.id === payload.new.id)) msgCache.push(payload.new);
+      renderAll(msgCache);
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, payload => {
+      const idx = msgCache.findIndex(x => x.id === payload.new.id);
+      if (idx > -1) msgCache[idx] = payload.new;
+      renderAll(msgCache);
+    })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
+      msgCache = msgCache.filter(x => x.id !== payload.old.id);
       renderAll(msgCache);
     })
     .subscribe();
@@ -650,6 +738,31 @@ function renderAll(msgs) {
   [...msgs].sort((a,b) => a.ts - b.ts).forEach(renderOne);
   parseEmoji(c);
   if (atBottom) c.scrollTop = c.scrollHeight;
+}
+
+function buildInlineMeta(m, isMe) {
+  const meta = document.createElement('div');
+  meta.className = 'in-bubble-meta';
+  const t = new Date(m.ts || Date.now());
+  const hh = t.getHours().toString().padStart(2,'0');
+  const mm = t.getMinutes().toString().padStart(2,'0');
+  let str = (isMe ? '' : m.sender + ' · ') + hh + ':' + mm;
+  if (m.edited) str += ' · ویرایش شد';
+  meta.textContent = str;
+  return meta;
+}
+
+function buildReplyQuote(rt) {
+  const rq = document.createElement('div');
+  rq.className = 'reply-quote';
+  const who = document.createElement('div');
+  who.className = 'reply-quote-who';
+  who.textContent = rt.sender === me ? 'خودت' : rt.sender;
+  const txt = document.createElement('div');
+  txt.className = 'reply-quote-text';
+  txt.textContent = rt.type === 'sticker' ? rt.text + ' (استیکر)' : rt.text;
+  rq.appendChild(who); rq.appendChild(txt);
+  return rq;
 }
 
 function renderOne(m) {
@@ -671,31 +784,49 @@ function renderOne(m) {
   wrap.className = `msg-wrap ${isMe ? 'me' : 'them'}`;
 
   const bub = document.createElement('div');
+  let menuable = true;
+
   if (m.type === 'sticker') {
     bub.className = 'bubble sticker-bubble';
-    bub.textContent = m.text;
+    if (m.reply_to) bub.appendChild(buildReplyQuote(m.reply_to));
+    const txt = document.createElement('div');
+    txt.textContent = m.text;
+    bub.appendChild(txt);
+    bub.appendChild(buildInlineMeta(m, isMe));
   } else if (m.type === 'image') {
     bub.className = 'bubble'; bub.style.padding = '6px';
+    menuable = false;
+    if (m.reply_to) bub.appendChild(buildReplyQuote(m.reply_to));
     const img = document.createElement('img');
     img.src = m.url;
     img.style.cssText = 'max-width:200px;border-radius:10px;display:block;cursor:pointer';
     img.loading = 'lazy';
-    img.onclick = () => openLb(m.url);
+    img.onclick = (e) => { e.stopPropagation(); openLb(m.url); };
     bub.appendChild(img);
+    const metaWrap = document.createElement('div');
+    metaWrap.style.padding = '4px 6px 0';
+    metaWrap.appendChild(buildInlineMeta(m, isMe));
+    bub.appendChild(metaWrap);
   } else {
     bub.className = 'bubble';
-    bub.textContent = m.text;
+    if (m.reply_to) bub.appendChild(buildReplyQuote(m.reply_to));
+    const txt = document.createElement('span');
+    txt.className = 'msg-text';
+    txt.textContent = m.text;
+    bub.appendChild(txt);
+    bub.appendChild(buildInlineMeta(m, isMe));
   }
 
-  const meta = document.createElement('div');
-  meta.className = 'msg-meta';
-  const t = new Date(m.ts || Date.now());
-  const hh = t.getHours().toString().padStart(2,'0');
-  const mm = t.getMinutes().toString().padStart(2,'0');
-  meta.textContent = (isMe ? '' : m.sender + ' · ') + hh + ':' + mm;
+  if (menuable) {
+    bub.style.cursor = 'pointer';
+    bub.onclick = (e) => {
+      if (bub.dataset.editing === '1') return;
+      e.stopPropagation();
+      openMsgMenu(m, bub, isMe);
+    };
+  }
 
   wrap.appendChild(bub);
-  wrap.appendChild(meta);
   c.appendChild(wrap);
 
   if (!isMe && m.ts && Date.now() - m.ts < 6000 && document.hidden) {
@@ -706,6 +837,8 @@ function renderOne(m) {
   }
 }
 
+let replyingTo = null;
+
 async function sendMsg() {
   if (!me) return;
   const inp = document.getElementById('msg-input');
@@ -713,7 +846,9 @@ async function sendMsg() {
   if (!txt) return;
   inp.value = ''; inp.style.height = 'auto';
   bounceSend();
-  await supabase.from('messages').insert({ sender: me, type: 'text', text: txt, ts: Date.now() });
+  const payload = { sender: me, type: 'text', text: txt, ts: Date.now() };
+  if (replyingTo) { payload.reply_to = replyingTo; cancelReply(); }
+  await supabase.from('messages').insert(payload);
   if (me === FRIEND_ID) sendBale(`💬 پیام:\n${txt.slice(0,100)}`);
 }
 window.sendMsg = sendMsg;
@@ -728,27 +863,140 @@ function bounceSend() {
 async function sendStk(s) {
   if (!me) return;
   bounceSend();
-  await supabase.from('messages').insert({ sender: me, type: 'sticker', text: s, ts: Date.now() });
+  const payload = { sender: me, type: 'sticker', text: s, ts: Date.now() };
+  if (replyingTo) { payload.reply_to = replyingTo; cancelReply(); }
+  await supabase.from('messages').insert(payload);
   if (me === FRIEND_ID) sendBale(`${s} استیکر`);
 }
 
 async function sendQuick(text) {
   if (!me) return;
   bounceSend();
-  await supabase.from('messages').insert({ sender: me, type: 'text', text, ts: Date.now() });
+  const payload = { sender: me, type: 'text', text, ts: Date.now() };
+  if (replyingTo) { payload.reply_to = replyingTo; cancelReply(); }
+  await supabase.from('messages').insert(payload);
   if (me === FRIEND_ID) sendBale(`💬 پیام:\n${text.slice(0,100)}`);
 }
 
+// --- message actions: menu, copy, share, edit, reply ---
+function toast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+function openMsgMenu(m, bubEl, isMe) {
+  const menu = document.getElementById('msg-menu');
+  menu.innerHTML = '';
+  const items = [];
+  items.push(['📤 اشتراک‌گذاری', () => shareMsg(m)]);
+  items.push(['📋 کپی', () => copyMsg(m)]);
+  if (isMe && m.type === 'text') items.push(['✏️ ویرایش', () => startEdit(m, bubEl)]);
+  items.push(['↩️ پاسخ', () => startReply(m)]);
+  items.forEach(([label, fn]) => {
+    const it = document.createElement('div');
+    it.className = 'menu-item';
+    it.textContent = label;
+    it.onclick = (e) => { e.stopPropagation(); closeMsgMenu(); fn(); };
+    menu.appendChild(it);
+  });
+  const r = bubEl.getBoundingClientRect();
+  menu.classList.add('open');
+  const menuW = menu.offsetWidth || 170;
+  let left = r.left;
+  if (left + menuW > window.innerWidth - 8) left = window.innerWidth - menuW - 8;
+  if (left < 8) left = 8;
+  let top = r.bottom + 6;
+  if (top + 180 > window.innerHeight) top = r.top - 186;
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+}
+window.closeMsgMenu = () => document.getElementById('msg-menu').classList.remove('open');
+
+async function copyMsg(m) {
+  try { await navigator.clipboard.writeText(m.text || ''); toast('کپی شد'); }
+  catch { toast('کپی نشد'); }
+}
+async function shareMsg(m) {
+  if (navigator.share) {
+    try { await navigator.share({ text: m.text || '' }); } catch {}
+  } else {
+    copyMsg(m);
+    toast('اشتراک‌گذاری پشتیبانی نمی‌شه؛ متن کپی شد');
+  }
+}
+
+function startEdit(m, bubEl) {
+  bubEl.dataset.editing = '1';
+  bubEl.innerHTML = '';
+  const ta = document.createElement('textarea');
+  ta.className = 'edit-textarea';
+  ta.value = m.text || '';
+  ta.onclick = e => e.stopPropagation();
+  const row = document.createElement('div');
+  row.className = 'edit-actions';
+  const save = document.createElement('button');
+  save.className = 'edit-save'; save.textContent = 'ذخیره';
+  const cancel = document.createElement('button');
+  cancel.className = 'edit-cancel'; cancel.textContent = 'لغو';
+  row.appendChild(save); row.appendChild(cancel);
+  bubEl.appendChild(ta); bubEl.appendChild(row);
+  ta.focus();
+
+  cancel.onclick = (e) => { e.stopPropagation(); renderAll(msgCache); };
+  save.onclick = async (e) => {
+    e.stopPropagation();
+    const newText = ta.value.trim();
+    if (!newText) return;
+    await supabase.from('messages').update({ text: newText, edited: true }).eq('id', m.id);
+    const idx = msgCache.findIndex(x => x.id === m.id);
+    if (idx > -1) { msgCache[idx] = { ...msgCache[idx], text: newText, edited: true }; }
+    renderAll(msgCache);
+  };
+}
+
+function startReply(m) {
+  replyingTo = { id: m.id, sender: m.sender, type: m.type, text: m.type === 'sticker' ? m.text : (m.text || '').slice(0, 120) };
+  renderReplyBar();
+  document.getElementById('msg-input').focus();
+}
+function renderReplyBar() {
+  let bar = document.getElementById('reply-bar');
+  if (!replyingTo) { if (bar) bar.remove(); return; }
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'reply-bar';
+    document.querySelector('.chat-input').insertAdjacentElement('beforebegin', bar);
+  }
+  bar.innerHTML = '';
+  const txt = document.createElement('div'); txt.className = 'reply-bar-text';
+  const who = document.createElement('span'); who.className = 'reply-bar-who';
+  who.textContent = (replyingTo.sender === me ? 'خودت' : replyingTo.sender) + ': ';
+  const snip = document.createElement('span'); snip.className = 'reply-bar-snip';
+  snip.textContent = replyingTo.type === 'sticker' ? replyingTo.text + ' (استیکر)' : replyingTo.text;
+  txt.appendChild(who); txt.appendChild(snip);
+  const x = document.createElement('button'); x.className = 'reply-bar-x'; x.textContent = '✕';
+  x.onclick = () => cancelReply();
+  bar.appendChild(txt); bar.appendChild(x);
+}
+window.cancelReply = () => { replyingTo = null; renderReplyBar(); };
+
 async function sendBale(text) {
   const cfg = loadCfg();
-  if (!cfg?.token || !cfg?.chatId) return;
+  if (!cfg?.token || !cfg?.chatId) { console.warn('Bale: تنظیمات خالیه'); return; }
   try {
-    await fetch(`https://tapi.bale.ai/bot${cfg.token}/sendMessage`, {
+    const res = await fetch(`https://tapi.bale.ai/bot${cfg.token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: cfg.chatId, text })
     });
-  } catch(e) { console.warn('Bale fail', e); }
+    const body = await res.text();
+    if (!res.ok) console.error('Bale error:', res.status, body);
+    else console.log('Bale sent OK:', body);
+  } catch(e) { console.error('Bale fetch failed (احتمالاً CORS یا شبکه):', e); }
 }
 
 function loadCfg() { try { return JSON.parse(localStorage.getItem('koki_bale')||'null'); } catch { return null; } }
@@ -786,6 +1034,7 @@ document.addEventListener('click', e => {
   if (stkOpen && !e.target.closest('#sticker-panel') && !e.target.closest('.icon-btn')) toggleStk(false);
   if (quickOpen && !e.target.closest('#quick-panel') && !e.target.closest('.icon-btn')) toggleQuick(false);
   if (menuOpen && !e.target.closest('#hdr-menu') && !e.target.closest('.icon-btn')) toggleMenu(false);
+  if (!e.target.closest('#msg-menu')) closeMsgMenu();
 });
 
 window.confirmClearHistory = async () => {
