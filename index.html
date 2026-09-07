@@ -499,6 +499,14 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
 }
 .btn-cancel:hover{background:rgba(255,255,255,0.09)}
 .btn-save{flex:2}
+.btn-test{
+  margin-top:2px;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;color:#e8eaf0;
+  font-family:'Vazirmatn',sans-serif;
+  font-size:13px;padding:10px;cursor:pointer;
+}
+.btn-test:hover{background:rgba(56,189,248,0.16);border-color:rgba(56,189,248,0.4)}
 
 #lightbox{
   display:none;position:fixed;inset:0;
@@ -586,6 +594,7 @@ img.emoji{height:1.15em;width:1.15em;vertical-align:-0.2em;margin:0 1px}
       <button class="btn-cancel" onclick="closeCfg()">انصراف</button>
       <button class="btn-primary btn-save" onclick="saveCfg()">ذخیره</button>
     </div>
+    <button class="btn-test" onclick="testCfg()">🧪 ارسال پیام تست</button>
   </div>
 </div>
 
@@ -986,7 +995,7 @@ window.cancelReply = () => { replyingTo = null; renderReplyBar(); };
 
 async function sendBale(text) {
   const cfg = loadCfg();
-  if (!cfg?.token || !cfg?.chatId) { console.warn('Bale: تنظیمات خالیه'); return; }
+  if (!cfg?.token || !cfg?.chatId) { return { ok: false, info: 'تنظیمات خالیه' }; }
   try {
     const res = await fetch(`https://tapi.bale.ai/bot${cfg.token}/sendMessage`, {
       method: 'POST',
@@ -994,9 +1003,20 @@ async function sendBale(text) {
       body: JSON.stringify({ chat_id: cfg.chatId, text })
     });
     const body = await res.text();
-    if (!res.ok) console.error('Bale error:', res.status, body);
-    else console.log('Bale sent OK:', body);
-  } catch(e) { console.error('Bale fetch failed (احتمالاً CORS یا شبکه):', e); }
+    if (!res.ok) {
+      const info = `خطا ${res.status}: ${body.slice(0,140)}`;
+      console.error('Bale error:', res.status, body);
+      toast('❌ ' + info);
+      return { ok: false, info };
+    }
+    console.log('Bale sent OK:', body);
+    return { ok: true, info: body };
+  } catch(e) {
+    const info = 'خطای شبکه/CORS: ' + (e?.message || e);
+    console.error('Bale fetch failed:', e);
+    toast('❌ ' + info);
+    return { ok: false, info };
+  }
 }
 
 function loadCfg() { try { return JSON.parse(localStorage.getItem('koki_bale')||'null'); } catch { return null; } }
@@ -1012,7 +1032,17 @@ window.saveCfg = () => {
     token: document.getElementById('cfg-token').value.trim(),
     chatId: document.getElementById('cfg-chatid').value.trim()
   }));
+  toast('ذخیره شد');
   closeCfg();
+};
+window.testCfg = async () => {
+  const token = document.getElementById('cfg-token').value.trim();
+  const chatId = document.getElementById('cfg-chatid').value.trim();
+  if (!token || !chatId) { toast('❌ اول توکن و شناسه رو پر کن'); return; }
+  localStorage.setItem('koki_bale', JSON.stringify({ token, chatId }));
+  toast('در حال ارسال...');
+  const r = await sendBale('✅ پیام تست از KokiChat');
+  if (r.ok) toast('✅ رسید! بله رو چک کن');
 };
 
 let menuOpen = false;
